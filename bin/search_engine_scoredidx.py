@@ -24,7 +24,7 @@ your'''.split())
 
 class ScoredIndexSearch(object):
     def __init__(self, prefix, *redis_settings):
-        self.prefix = prefix.lower().rstrip(':') + ':'
+        self.prefix = prefix.lower().strip(':') + ':'
         self.connection = redis.Redis(*redis_settings)
         self.stemmer = PorterStemmer()
     
