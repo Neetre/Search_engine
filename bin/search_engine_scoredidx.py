@@ -6,6 +6,7 @@ import redis
 from nltk.stem import PorterStemmer
 from metaphone import doublemetaphone
 from redis.exceptions import ConnectionError
+from typing import List, Tuple
 
 NON_WORDS = re.compile("[^a-z0-9' ]")
 
@@ -22,14 +23,15 @@ there these they this tis to too twas us wants was we were what
 when where which while who whom why will with would yet you
 your'''.split())
 
-class ScoredIndexSearch(object):
-    def __init__(self, prefix, *redis_settings):
+class ScoredIndexSearch:
+    def __init__(self, prefix: str, *redis_settings) -> None:
         self.prefix = prefix.lower().strip(':') + ':'
         self.connection = redis.Redis(*redis_settings)
         self.stemmer = PorterStemmer()
-    
+
     @staticmethod
-    def get_index_keys(content, add=True):
+    def get_index_keys(content: str, add: bool = True) -> List[str]:
+        """Extract and process the keys from the content."""
         words = NON_WORDS.sub(' ', content.lower()).split()
         words = [word.strip("'") for word in words]
         words = [word for word in words if word not in STOP_WORDS and len(word) > 1]
@@ -56,7 +58,8 @@ class ScoredIndexSearch(object):
         tf = dict((word, count / wordcount) for word, count in counts.items())
         return tf
 
-    def handle_content(self, id, content, add=True):
+    def handle_content(self, id: int, content: str, add: bool = True) -> int:
+        """Add or remove the content from the index."""
         keys = self.get_index_keys(content)
         prefix = self.prefix
         pipe = self.connection.pipeline(False)
@@ -69,36 +72,40 @@ class ScoredIndexSearch(object):
             for key in keys:
                 pipe.zrem(prefix + key, id)
         pipe.execute()
-    
+
         return len(keys)
 
-    def add_indexed_item(self, id, content):
+    def add_indexed_item(self, id: int, content: str) -> int:
+        """Add the content to the index."""
         return self.handle_content(id, content, True)
-    
-    def remove_indexed_item(self, id, content):
+
+    def remove_indexed_item(self, id: int, content: str) -> int:
+        """Remove the content from the index."""
         return self.handle_content(id, content, False)
-    
-    def search(self, query_string, offset=0, count=10):
+
+    def search(self, query_string: str, offset: int = 0, count: int = 10) -> Tuple[List[Tuple[int, float]], int]:
+        """Search the index for the query string."""
         keys = [self.prefix + key for key in self.get_index_keys(query_string, False)]
-    
+
         if not keys:
             return [], 0
-        
-        def idf(count):
+
+        def idf(count: int) -> float:
+            """Calculate the inverse document frequency."""
             if not count:
                 return 0
             return max(math.log(total_docs / count, 2), 0)
-    
+
         total_docs = max(self.connection.scard(self.prefix + 'indexed:'), 1)
 
         pipe = self.connection.pipeline(False)
         for key in keys:
             pipe.zcard(key)
         sizes = pipe.execute()
-    
+
         idfs = list(map(idf, sizes))
         weights = dict((key, idfv) for key, size, idfv in zip(keys, sizes, idfs) if size)
-        
+
         if not weights:
             return [], 0
 
@@ -109,7 +116,7 @@ class ScoredIndexSearch(object):
         finally:
             self.connection.delete(temp_key)
         return ids, known
-    
+
 def main():
     try:
         t = ScoredIndexSearch('search', 'localhost')
@@ -119,7 +126,7 @@ def main():
         keys = t.connection.keys('search*')
         if keys:
             t.connection.delete(*keys)
-        
+
         t.add_indexed_item(1, 'This is a test')
         t.add_indexed_item(2, 'I am testing this search engine that I wrote')
 
@@ -131,7 +138,6 @@ def main():
         print(t.search('search'))
     except ConnectionError:
         print("Failed to connect to Redis. Please ensure that the Redis server is running.")
-
 
 if __name__ == '__main__':
     main()
