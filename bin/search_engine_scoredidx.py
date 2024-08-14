@@ -132,5 +132,6 @@ def main():
     except ConnectionError:
         print("Failed to connect to Redis. Please ensure that the Redis server is running.")
 
+
 if __name__ == '__main__':
     main()
