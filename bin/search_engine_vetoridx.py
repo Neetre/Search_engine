@@ -1,9 +1,10 @@
 import math
 from collections import Counter
 import numpy as np
+from load import Loader
 from typing import Dict, List, Tuple
 import nltk
-nltk.download('punkt')
+# nltk.download('punkt')
 
 
 class VectorSearch:
@@ -74,7 +75,9 @@ def search_documents(vs: VectorSearch, documents: Dict[int, str], index: Dict[in
 def main():
     try:
         vs = VectorSearch()
-        documents = load_documents()
+        # documents = load_documents()
+        loader = Loader()
+        documents = loader.load_parquet("C:/Users/Mattia/Desktop/data/a.parquet", 200000)
         index = index_documents(vs, documents)
 
         searchterm = input('Enter Search Term: ').strip()
@@ -88,7 +91,7 @@ def main():
             print("No matches found.")
             return
 
-        for relation, snippet in matches:
+        for relation, snippet in matches[:20]:
             print(f"{relation:.4f} {snippet}")
 
     except Exception as e:
