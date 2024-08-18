@@ -2,7 +2,9 @@
 
 ## Description
 
-This project is a search engine that uses the vector index and scored index methods. The search engine is responsible for searching for documents that contain the terms entered by the user. The search engine uses the [Redis](https://redis.io/docs/) database to store the indexes and the documents.
+This project is a search engine that uses the vector index and scored index methods. 
+The search engine is responsible for searching for documents that contain the terms entered by the user. 
+The 'scored index' search engine uses the [Redis](https://redis.io/docs/) database to store the indexes and the documents.
 
 In this package there are two main modules:
 
