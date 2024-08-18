@@ -14,7 +14,7 @@ In this package there are two main modules:
 
 ## Requirements
 
-Make sure to have installed Redis on your machine
+Make sure to have installed Redis on your machine.
 
 python >= 3.9
 
