@@ -31,6 +31,10 @@ These scripts will install required dependencies, and build a virtual environmen
 
 Each module has a main function that can be executed to run the search engine. To run the search engine, you need to execute the main function of the module you want to use.
 
+```bash
+cd bin
+```
+
 To run the search engine using the vector index method, execute the following command:
 
 ```bash
