@@ -14,6 +14,8 @@ In this package there are two main modules:
 
 ## Requirements
 
+Make sure to have installed Redis on your machine
+
 python >= 3.9
 
 To run the project, you need to have Python installed on your machine. You can download Python from the [official website](https://www.python.org/downloads/)
