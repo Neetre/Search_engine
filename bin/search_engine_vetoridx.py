@@ -77,7 +77,7 @@ def main():
         vs = VectorSearch()
         # documents = load_documents()
         loader = Loader()
-        documents = loader.load_parquet("C:/Users/Mattia/Desktop/data/a.parquet", 200000)
+        documents = loader.load_txt("../data/documents.txt")
         index = index_documents(vs, documents)
 
         searchterm = input('Enter Search Term: ').strip()

@@ -27,6 +27,8 @@ To run the project, you need to have Python installed on your machine. You can d
 
 These scripts will install required dependencies, and build a virtual environment for you if you don't have one.
 
+Also make sure to have installed Redis on your machine. You can download Redis from the [official website](https://redis.io/download)
+
 ## Usage
 
 Each module has a main function that can be executed to run the search engine. To run the search engine, you need to execute the main function of the module you want to use.
@@ -46,6 +48,16 @@ else to run the search engine using the scored index method, execute the followi
 ```bash
 python search_engine_scoredidx.py
 ```
+
+### Note
+
+Before running the "search_engine_vetoridx.py" module, you should insert the document with the terms in the "data/documents.txt" file.
+You can look in the "load.py" module to see how the documents are inserted into the search engine, and choose the best function for your case, you have to change it in the "search_engine_vetoridx.py" module.
+
+Example of the search engine using the vector index method:
+
+![input](/data/readme/s_1.png)
+![output](/data/readme/s_2.png)
 
 ## License
 
